@@ -106,25 +106,27 @@ export default function Home() {
                         <MangaGrid title="มังงะมาใหม่" mangas={mangas} />
                         
                         {/* Pagination Controls for Latest */}
-                        <div className="flex justify-center items-center gap-4 mt-6">
-                            <button 
-                                onClick={() => setLatestPage(p => Math.max(1, p - 1))}
-                                disabled={latestPage === 1}
-                                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg disabled:opacity-50 hover:bg-secondary/80 transition-colors"
-                            >
-                                Previous
-                            </button>
-                            <span className="text-sm text-muted-foreground">
-                                Page {latestPage} of {totalLatestPages || 1}
-                            </span>
-                            <button 
-                                onClick={() => setLatestPage(p => Math.min(totalLatestPages, p + 1))}
-                                disabled={latestPage >= totalLatestPages}
-                                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg disabled:opacity-50 hover:bg-secondary/80 transition-colors"
-                            >
-                                Next
-                            </button>
-                        </div>
+                        {totalLatestPages > 1 && (
+                            <div className="flex justify-center items-center gap-4 mt-6">
+                                <button 
+                                    onClick={() => setLatestPage(p => Math.max(1, p - 1))}
+                                    disabled={latestPage === 1}
+                                    className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg disabled:opacity-50 hover:bg-secondary/80 transition-colors"
+                                >
+                                    Previous
+                                </button>
+                                <span className="text-sm text-muted-foreground">
+                                    Page {latestPage} of {totalLatestPages || 1}
+                                </span>
+                                <button 
+                                    onClick={() => setLatestPage(p => Math.min(totalLatestPages, p + 1))}
+                                    disabled={latestPage >= totalLatestPages}
+                                    className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg disabled:opacity-50 hover:bg-secondary/80 transition-colors"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
                     </>
                 ) : (
                     <div className="text-center py-10 text-muted-foreground">
@@ -147,25 +149,27 @@ export default function Home() {
                         <MangaGrid title="" mangas={popularMangas} />
                         
                         {/* Pagination Controls for Popular */}
-                        <div className="flex justify-center items-center gap-4 mt-6">
-                            <button 
-                                onClick={() => setPopularPage(p => Math.max(1, p - 1))}
-                                disabled={popularPage === 1}
-                                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg disabled:opacity-50 hover:bg-secondary/80 transition-colors"
-                            >
-                                Previous
-                            </button>
-                            <span className="text-sm text-muted-foreground">
-                                Page {popularPage} of {totalPopularPages || 1}
-                            </span>
-                            <button 
-                                onClick={() => setPopularPage(p => Math.min(totalPopularPages, p + 1))}
-                                disabled={popularPage >= totalPopularPages}
-                                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg disabled:opacity-50 hover:bg-secondary/80 transition-colors"
-                            >
-                                Next
-                            </button>
-                        </div>
+                        {totalPopularPages > 1 && (
+                            <div className="flex justify-center items-center gap-4 mt-6">
+                                <button 
+                                    onClick={() => setPopularPage(p => Math.max(1, p - 1))}
+                                    disabled={popularPage === 1}
+                                    className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg disabled:opacity-50 hover:bg-secondary/80 transition-colors"
+                                >
+                                    Previous
+                                </button>
+                                <span className="text-sm text-muted-foreground">
+                                    Page {popularPage} of {totalPopularPages || 1}
+                                </span>
+                                <button 
+                                    onClick={() => setPopularPage(p => Math.min(totalPopularPages, p + 1))}
+                                    disabled={popularPage >= totalPopularPages}
+                                    className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg disabled:opacity-50 hover:bg-secondary/80 transition-colors"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
                     </>
                 ) : (
                     <div className="text-center py-10 text-muted-foreground">
