@@ -41,7 +41,9 @@ function MangaListContent() {
     useEffect(() => {
         api.get('/api/genres/')
             .then(response => {
-                setGenres(response.data);
+                const data = response.data;
+                const results = Array.isArray(data) ? data : data.results || [];
+                setGenres(results);
             })
             .catch(error => {
                 console.error("Error fetching genres:", error);

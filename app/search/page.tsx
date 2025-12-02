@@ -28,7 +28,9 @@ function SearchContent() {
             setLoading(true);
             api.get(`/api/mangas/?search=${encodeURIComponent(query)}`)
                 .then(response => {
-                    setMangas(response.data);
+                    const data = response.data;
+                    const results = Array.isArray(data) ? data : data.results || [];
+                    setMangas(results);
                     setLoading(false);
                 })
                 .catch(error => {
