@@ -48,3 +48,10 @@ venv/
 .env
 db.sqlite3
 *.log
+
+# Scraper
+inspect_home.py
+inspect_site.py
+scraper/
+scraper.py
+scraper_downloads/
