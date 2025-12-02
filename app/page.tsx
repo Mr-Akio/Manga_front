@@ -26,32 +26,62 @@ export default function Home() {
   const [popularMangas, setPopularMangas] = useState<Manga[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchMangas = async () => {
-      try {
-        const [latestRes, popularRes] = await Promise.all([
-          api.get('/api/mangas/'),
-          api.get('/api/mangas/?ordering=-views&limit=6')
-        ]);
-        
-        
-        // Handle pagination structure (results array)
-        const latestData = Array.isArray(latestRes.data) ? latestRes.data : latestRes.data.results || [];
-        setMangas(latestData);
-        
-        // Handle pagination structure for popular
-        const popularData = Array.isArray(popularRes.data) ? popularRes.data : popularRes.data.results || [];
-        setPopularMangas(popularData.slice(0, 6));
-        
-      } catch (error) {
-        console.error('Error fetching mangas:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Pagination State
+  const [latestPage, setLatestPage] = useState(1);
+  const [popularPage, setPopularPage] = useState(1);
+  const [latestCount, setLatestCount] = useState(0);
+  const [popularCount, setPopularCount] = useState(0);
+  const LIMIT = 12; // Items per page for latest
+  const POPULAR_LIMIT = 6; // Items per page for popular
 
-    fetchMangas();
-  }, []);
+  useEffect(() => {
+    fetchLatestMangas(latestPage);
+  }, [latestPage]);
+
+  useEffect(() => {
+    fetchPopularMangas(popularPage);
+  }, [popularPage]);
+
+  const fetchLatestMangas = async (page: number) => {
+    try {
+      const offset = (page - 1) * LIMIT;
+      const response = await api.get(`/api/mangas/?limit=${LIMIT}&offset=${offset}`);
+      const data = response.data;
+      
+      if (Array.isArray(data)) {
+        setMangas(data);
+        setLatestCount(data.length); // Fallback if no count
+      } else {
+        setMangas(data.results || []);
+        setLatestCount(data.count || 0);
+      }
+    } catch (error) {
+      console.error('Error fetching latest mangas:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPopularMangas = async (page: number) => {
+    try {
+      const offset = (page - 1) * POPULAR_LIMIT;
+      const response = await api.get(`/api/mangas/?ordering=-views&limit=${POPULAR_LIMIT}&offset=${offset}`);
+      const data = response.data;
+
+      if (Array.isArray(data)) {
+        setPopularMangas(data);
+        setPopularCount(data.length);
+      } else {
+        setPopularMangas(data.results || []);
+        setPopularCount(data.count || 0);
+      }
+    } catch (error) {
+      console.error('Error fetching popular mangas:', error);
+    }
+  };
+
+  const totalLatestPages = Math.ceil(latestCount / LIMIT);
+  const totalPopularPages = Math.ceil(popularCount / POPULAR_LIMIT);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -72,7 +102,30 @@ export default function Home() {
                 {loading ? (
                     <div className="text-center py-10 text-muted-foreground">Loading...</div>
                 ) : mangas.length > 0 ? (
-                    <MangaGrid title="มังงะมาใหม่" mangas={mangas} />
+                    <>
+                        <MangaGrid title="มังงะมาใหม่" mangas={mangas} />
+                        
+                        {/* Pagination Controls for Latest */}
+                        <div className="flex justify-center items-center gap-4 mt-6">
+                            <button 
+                                onClick={() => setLatestPage(p => Math.max(1, p - 1))}
+                                disabled={latestPage === 1}
+                                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg disabled:opacity-50 hover:bg-secondary/80 transition-colors"
+                            >
+                                Previous
+                            </button>
+                            <span className="text-sm text-muted-foreground">
+                                Page {latestPage} of {totalLatestPages || 1}
+                            </span>
+                            <button 
+                                onClick={() => setLatestPage(p => Math.min(totalLatestPages, p + 1))}
+                                disabled={latestPage >= totalLatestPages}
+                                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg disabled:opacity-50 hover:bg-secondary/80 transition-colors"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </>
                 ) : (
                     <div className="text-center py-10 text-muted-foreground">
                         No mangas found. <br/>
@@ -90,7 +143,30 @@ export default function Home() {
                 {loading ? (
                     <div className="text-center py-10 text-muted-foreground">Loading...</div>
                 ) : popularMangas.length > 0 ? (
-                    <MangaGrid title="" mangas={popularMangas} />
+                    <>
+                        <MangaGrid title="" mangas={popularMangas} />
+                        
+                        {/* Pagination Controls for Popular */}
+                        <div className="flex justify-center items-center gap-4 mt-6">
+                            <button 
+                                onClick={() => setPopularPage(p => Math.max(1, p - 1))}
+                                disabled={popularPage === 1}
+                                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg disabled:opacity-50 hover:bg-secondary/80 transition-colors"
+                            >
+                                Previous
+                            </button>
+                            <span className="text-sm text-muted-foreground">
+                                Page {popularPage} of {totalPopularPages || 1}
+                            </span>
+                            <button 
+                                onClick={() => setPopularPage(p => Math.min(totalPopularPages, p + 1))}
+                                disabled={popularPage >= totalPopularPages}
+                                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg disabled:opacity-50 hover:bg-secondary/80 transition-colors"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </>
                 ) : (
                     <div className="text-center py-10 text-muted-foreground">
                         No popular mangas found.
