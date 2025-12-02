@@ -23,8 +23,11 @@ export default function ProfilePage() {
                         api.get('/api/bookmarks/'),
                         api.get('/api/history/')
                     ]);
-                    setBookmarks(bookmarksRes.data);
-                    setHistory(historyRes.data);
+                    const bookmarksData = bookmarksRes.data;
+                    const historyData = historyRes.data;
+                    
+                    setBookmarks(Array.isArray(bookmarksData) ? bookmarksData : bookmarksData.results || []);
+                    setHistory(Array.isArray(historyData) ? historyData : historyData.results || []);
                 } catch (error) {
                     console.error("Error fetching profile data:", error);
                 } finally {

@@ -48,7 +48,9 @@ export default function MangaDetailsPage() {
              // Fetch Bookmarks
              api.get(`/api/bookmarks/`)
                 .then(response => {
-                    const bookmark = response.data.find((b: any) => b.manga === Number(id));
+                    const data = response.data;
+                    const results = Array.isArray(data) ? data : data.results || [];
+                    const bookmark = results.find((b: any) => b.manga === Number(id));
                     if (bookmark) {
                         setIsBookmarked(true);
                         setBookmarkId(bookmark.id);
@@ -59,7 +61,9 @@ export default function MangaDetailsPage() {
             // Fetch User Rating
             api.get(`/api/ratings/`)
                 .then(response => {
-                    const rating = response.data.find((r: any) => r.manga === Number(id));
+                    const data = response.data;
+                    const results = Array.isArray(data) ? data : data.results || [];
+                    const rating = results.find((r: any) => r.manga === Number(id));
                     if (rating) {
                         setUserRating(rating.score);
                     }

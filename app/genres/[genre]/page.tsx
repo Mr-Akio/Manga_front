@@ -30,7 +30,8 @@ export default function GenrePage() {
                 .then(response => {
                     // Filter locally for now since backend doesn't support filtering yet
                     // In a real app, we should add ?genre=... to the API
-                    const allMangas = response.data;
+                    const data = response.data;
+                    const allMangas = Array.isArray(data) ? data : data.results || [];
                     const filtered = allMangas.filter((m: Manga) => {
                         // Check if genres is an array (new format) or string (old format fallback)
                         let genreMatch = false;

@@ -36,7 +36,9 @@ export default function CommentSection({ mangaId, chapterId }: CommentSectionPro
                 url += `&chapter=${chapterId}`;
             }
             const response = await api.get(url);
-            setComments(response.data);
+            const data = response.data;
+            const results = Array.isArray(data) ? data : data.results || [];
+            setComments(results);
         } catch (error) {
             console.error("Error fetching comments:", error);
         } finally {

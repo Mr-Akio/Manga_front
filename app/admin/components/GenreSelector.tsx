@@ -26,7 +26,9 @@ export default function GenreSelector({ selectedGenres, onChange }: GenreSelecto
   const fetchGenres = async () => {
     try {
       const response = await api.get('/api/genres/');
-      setAvailableGenres(response.data);
+      const data = response.data;
+      const results = Array.isArray(data) ? data : data.results || [];
+      setAvailableGenres(results);
     } catch (error) {
       console.error("Error fetching genres:", error);
     }
