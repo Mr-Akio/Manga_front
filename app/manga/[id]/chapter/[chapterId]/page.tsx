@@ -7,7 +7,7 @@ import api from '../../../../lib/axios';
 import Navbar from '../../../../components/Navbar';
 import Footer from '../../../../components/Footer';
 import CommentSection from '../../../../components/CommentSection';
-import { ChevronLeft, ChevronRight, List } from 'lucide-react';
+import { ChevronLeft, ChevronRight, List, ArrowUp } from 'lucide-react';
 import Link from 'next/link';
 import { getImageUrl } from '../../../../utils/imageUtils';
 
@@ -34,6 +34,24 @@ export default function ChapterReadingPage() {
     const [manga, setManga] = useState<Manga | null>(null);
     const [currentChapter, setCurrentChapter] = useState<Chapter | null>(null);
     const [loading, setLoading] = useState(true);
+    const [showScrollTop, setShowScrollTop] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 300) {
+                setShowScrollTop(true);
+            } else {
+                setShowScrollTop(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     useEffect(() => {
         if (id && chapterId) {
@@ -135,8 +153,8 @@ export default function ChapterReadingPage() {
     const nextChapter = currentIndex < sortedChapters.length - 1 ? sortedChapters[currentIndex + 1] : null;
 
     return (
-        <div className="min-h-screen bg-[#1a1a1a] text-foreground font-sans">
-            <Navbar />
+        <div className="min-h-screen bg-[#1a1a1a] text-foreground font-sans relative">
+            <Navbar staticPosition={true} />
             
             <main className="container mx-auto px-0 md:px-4 py-4 max-w-4xl">
                 {/* Header / Navigation */}
@@ -226,6 +244,17 @@ export default function ChapterReadingPage() {
             </main>
             
             <Footer />
+
+            {/* Scroll to Top Button */}
+            <button
+                onClick={scrollToTop}
+                className={`fixed bottom-8 right-8 p-3 rounded-full bg-primary text-white shadow-lg hover:bg-primary/90 transition-all duration-300 z-50 ${
+                    showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
+                }`}
+                aria-label="Scroll to top"
+            >
+                <ArrowUp size={24} />
+            </button>
         </div>
     );
 }
