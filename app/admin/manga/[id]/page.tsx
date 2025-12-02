@@ -124,6 +124,12 @@ export default function EditMangaPage() {
         Object.entries(formData).forEach(([key, value]) => {
             if (key === 'is_featured') {
                 data.append(key, value ? 'true' : 'false');
+            } else if (key === 'cover_image' || key === 'banner_image') {
+                // Only send if it's a full URL (http/https) or empty (to clear)
+                // Skip if it's a relative path (existing image)
+                if (typeof value === 'string' && (value.startsWith('http') || value === '')) {
+                    data.append(key, value);
+                }
             } else {
                 data.append(key, String(value));
             }
