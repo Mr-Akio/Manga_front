@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import api from '../../lib/axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Eye, BookOpen, Layers, TrendingUp } from 'lucide-react';
+import { getImageUrl } from '../../utils/imageUtils';
 
 export default function AnalyticsDashboard() {
   const [data, setData] = useState<any>(null);
@@ -66,7 +67,7 @@ export default function AnalyticsDashboard() {
             <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
                 <TrendingUp size={20} className="text-primary" /> Daily Views (Last 7 Days)
             </h3>
-            <div className="h-[300px] w-full">
+            <div className="h-[300px] w-full min-h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data.chart_data}>
                         <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
@@ -96,7 +97,7 @@ export default function AnalyticsDashboard() {
                         <div className="font-bold text-muted-foreground w-6 text-center">{index + 1}</div>
                         <div className="w-10 h-14 bg-muted rounded overflow-hidden flex-shrink-0">
                             {manga.cover_image && (
-                                <img src={manga.cover_image} alt={manga.title} className="w-full h-full object-cover" />
+                                <img src={getImageUrl(manga.cover_image)} alt={manga.title} className="w-full h-full object-cover" />
                             )}
                         </div>
                         <div className="flex-1 min-w-0">

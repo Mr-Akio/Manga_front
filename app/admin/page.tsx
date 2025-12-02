@@ -63,7 +63,10 @@ export default function AdminDashboard() {
     setLoading(true);
     try {
       const response = await api.get(`/api/mangas/?search=${encodeURIComponent(search)}`);
-      setMangas(response.data);
+      // Handle pagination
+      const data = response.data;
+      const results = Array.isArray(data) ? data : data.results || [];
+      setMangas(results);
     } catch (error) {
       console.error("Error fetching mangas:", error);
     } finally {
@@ -80,7 +83,10 @@ export default function AdminDashboard() {
         const response = await api.get('/api/admin/users/', {
             headers: { Authorization: `Bearer ${token}` }
         });
-        setUsers(response.data);
+        // Handle pagination
+        const data = response.data;
+        const results = Array.isArray(data) ? data : data.results || [];
+        setUsers(results);
     } catch (error: any) {
         console.error("Error fetching users:", error);
         if (error.response && error.response.status === 401) {
@@ -96,8 +102,12 @@ export default function AdminDashboard() {
     setLoading(true);
     try {
         const response = await api.get('/api/comments/');
+        // Handle pagination
+        const data = response.data;
+        const results = Array.isArray(data) ? data : data.results || [];
+        
         // Sort by newest first
-        const sorted = response.data.sort((a: Comment, b: Comment) => 
+        const sorted = results.sort((a: Comment, b: Comment) => 
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
         setComments(sorted);
