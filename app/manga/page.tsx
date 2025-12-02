@@ -90,8 +90,7 @@ function MangaListContent() {
                 console.error("Error fetching mangas:", error);
                 setLoading(false);
             });
-                setLoading(false);
-            });
+
     }, [genre, status, type, order, page]);
 
     // Update URL when filters change
