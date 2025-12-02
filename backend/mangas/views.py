@@ -168,7 +168,12 @@ class MangaViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrAdminOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrAdminOrReadOnly]
+    
+    def get_permissions(self):
+        if self.action == 'create':
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticatedOrReadOnly(), IsOwnerOrAdminOrReadOnly()]
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
     filterset_fields = ['manga', 'chapter']
     ordering_fields = ['created_at']
