@@ -1,0 +1,10 @@
+django
+mysqlclient
+djangorestframework
+django-cors-headers
+djangorestframework-simplejwt
+django-filter
+gunicorn
+whitenoise
+dj-database-url
+psycopg2-binary
