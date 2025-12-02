@@ -18,8 +18,11 @@ export default function HeroSlider() {
     fetch(`${baseUrl}/api/mangas/?is_featured=true`)
       .then(res => res.json())
       .then(data => {
+        // Handle pagination if API returns { results: [...] } or just array
+        const results = Array.isArray(data) ? data : data.results || [];
+        
         // Map API data to slide format
-        const formattedSlides = data.map((manga: any) => ({
+        const formattedSlides = results.map((manga: any) => ({
           id: manga.id,
           title: manga.title,
           image: manga.banner_image || manga.cover_image,
