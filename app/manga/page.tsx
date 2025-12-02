@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import api from '../lib/axios';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { Star, BookOpen, Filter } from 'lucide-react';
+import { Star, BookOpen, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { getImageUrl } from '../utils/imageUtils';
 
@@ -29,6 +29,8 @@ function MangaListContent() {
     const [status, setStatus] = useState(searchParams.get('status') || '');
     const [type, setType] = useState(searchParams.get('type') || '');
     const [order, setOrder] = useState(searchParams.get('order') || 'update');
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     
     const [mangas, setMangas] = useState<Manga[]>([]);
     const [loading, setLoading] = useState(true);
@@ -57,7 +59,7 @@ function MangaListContent() {
     // Fetch Mangas
     useEffect(() => {
         setLoading(true);
-        let url = '/api/mangas/?';
+        let url = `/api/mangas/?page=${page}&`;
         
         if (genre) url += `genre=${encodeURIComponent(genre)}&`;
         if (status) url += `status=${encodeURIComponent(status)}&`;
@@ -74,14 +76,23 @@ function MangaListContent() {
 
         api.get(url)
             .then(response => {
-                setMangas(response.data);
+                // Handle paginated response
+                const data = response.data;
+                if (data.results) {
+                    setMangas(data.results);
+                    setTotalPages(Math.ceil(data.count / 20)); // Assuming page size is 20
+                } else {
+                    setMangas(data); // Fallback for non-paginated
+                }
                 setLoading(false);
             })
             .catch(error => {
                 console.error("Error fetching mangas:", error);
                 setLoading(false);
             });
-    }, [genre, status, type, order]);
+                setLoading(false);
+            });
+    }, [genre, status, type, order, page]);
 
     // Update URL when filters change
     const updateFilters = (key: string, value: string) => {
@@ -91,6 +102,8 @@ function MangaListContent() {
         } else {
             params.delete(key);
         }
+        // Reset to page 1 when filter changes
+        setPage(1);
         router.push(`/manga?${params.toString()}`);
         
         // Update local state immediately for responsiveness
@@ -243,6 +256,31 @@ function MangaListContent() {
                             className="mt-6 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
                         >
                             Reset Filters
+                        </button>
+                    </div>
+                )}
+
+                {/* Pagination Controls */}
+                {!loading && mangas.length > 0 && (
+                    <div className="flex justify-center items-center gap-4 mt-12">
+                        <button
+                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            <ChevronLeft size={20} /> Previous
+                        </button>
+                        
+                        <span className="text-sm font-medium">
+                            Page {page} of {totalPages}
+                        </span>
+
+                        <button
+                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Next <ChevronRight size={20} />
                         </button>
                     </div>
                 )}

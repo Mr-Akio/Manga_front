@@ -34,9 +34,12 @@ export default function Home() {
           api.get('/api/mangas/?ordering=-views&limit=6')
         ]);
         
-        setMangas(latestRes.data);
         
-        // Handle pagination structure if present
+        // Handle pagination structure (results array)
+        const latestData = Array.isArray(latestRes.data) ? latestRes.data : latestRes.data.results || [];
+        setMangas(latestData);
+        
+        // Handle pagination structure for popular
         const popularData = Array.isArray(popularRes.data) ? popularRes.data : popularRes.data.results || [];
         setPopularMangas(popularData.slice(0, 6));
         
